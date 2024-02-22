@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulário com Campo Select</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    .form-container {
+        max-width: 500px;
+        margin: auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+    }
+    
+    .form-group select:focus {
+        border-color: #007bff;
+    }
+
+    #form_consulta{
+        margin-top: 20px;
+    }
+    
+    .btn {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+    }
+    
+    .btn:hover {
+        background-color: #0056b3;
+    }
+    #apostas_feitas ul{
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        
+    }
+
+    #apostas_feitas ul li {
+        padding: 5px;
+        margin: 2px;
+        background-color: #ccc;
+        border-radius: 50%;
+        font-size: 0.9rem;
+        display: inline-flex;
+    }
+    #show_resultado{
+        margin-top: 20px;
+        border: 1px solid #CCC;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+        font-size: 0.8rem;
+    }
+
+    #ganhamo{
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .win{
+        color: green;
+    }
+
+    .loser{
+        color: red;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Consultar Nossa Fezinha</h2>
+    <p>Nossas Apostas</p>
+    <div id="apostas_feitas" class="apostas"></div>
+    <form action="#" method="post" id="form_consulta">
+        <div class="form-group">
+            <label for="selectOption">Escolha o Sorteio:</label>
+            <select id="selectOption" name="selectOption">
+                
+            </select>
+        </div>
+        <button type="submit" class="btn">Consultar</button>
+    </form>
+
+    <div id="show_resultado" class="resultado"></div>
+    <div id="ganhamo" class="status"></div>
+</div>
+
+<script type="text/javascript">
+
+    const apostasFeitas = [
+            ["01", "03", "06", "07", "08", "09", "10", "13", "14", "16", "17", "18", "20", "21", "24"],
+            ["02", "03", "04", "05", "09", "11", "12", "13", "15", "17", "19", "21", "22", "23", "25"],
+            ["01", "03", "07", "08", "09", "10", "11", "14", "15", "16", "17", "19", "20", "21", "23"],
+            ["01", "03", "04", "05", "06", "07", "09", "15", "16", "17", "18", "20", "21", "22", "23"],
+            ["03", "04", "05", "06", "07", "09", "10", "12", "13", "14", "15", "16", "17", "20", "23"],
+        ]
+
+    const feedSorteios = () => {
+        const start = 3030
+        const selectSorteio = document.getElementById('selectOption')
+        for(let i = start; i <= start + 10; i++){
+            let opt = document.createElement("option")
+            opt.text = i
+            opt.value = i
+            selectSorteio.add(opt)
+        }
+    }
+
+    const showApostas = () => {
+        const containerApostas = document.getElementById('apostas_feitas')
+        apostasFeitas.forEach(aposta => {
+            let ul = document.createElement("ul");
+            aposta.forEach(dezena => {
+                let li = document.createElement("li");
+                li.textContent = dezena
+                ul.appendChild(li)
+            })
+            let hr = document.createElement('hr')
+            containerApostas.appendChild(ul)
+            containerApostas.appendChild(hr)
+        })
+    }
+
+    const consultaResultado = () => {
+        const form = document.getElementById('form_consulta')
+        const showResultado = document.getElementById('show_resultado')
+        const ganhamo = document.getElementById('ganhamo')
+
+        form.addEventListener('submit', e => {
+            e.preventDefault()
+
+            while (ganhamo.firstChild) {
+                ganhamo.removeChild(ganhamo.firstChild);
+            }
+
+            const url = 'https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil/'+e.target.selectOption.value
+            fetch(url).then(res => {
+                if(!res.ok){
+                    showResultado.innerHTML = 'Resultado ainda não Liberado'
+                    return
+                }
+                return res.json()
+            }).then(data => {
+                showResultado.innerHTML = data.listaDezenas
+                apostasFeitas.forEach((aposta, i) => {
+                let acertos = 0
+                let p = document.createElement("p");
+
+                aposta.forEach(dezena => {
+                    if(data.listaDezenas.includes(dezena)){
+                        acertos++
+                    }
+                })
+                p.textContent = 'Acertos Aposta '+(i+1)+' = '+acertos
+                p.classList.add(acertos > 10 ? 'win' : 'loser')
+                ganhamo.appendChild(p)
+        })
+            })
+
+        })
+    }
+
+    feedSorteios()
+    showApostas()
+    consultaResultado()
+
+</script>
+
+</body>
+</html>
