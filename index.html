@@ -194,7 +194,9 @@
                 p.textContent = 'Acertos Aposta '+(i+1)+' = '+acertos
                 p.classList.add(acertos > 10 ? 'win' : 'loser')
                 ganhamo.appendChild(p)
-        })
+                })
+            }).catch(e => {
+                showResultado.innerHTML = 'API offline, tente novamente mais tarde'
             })
 
         })
