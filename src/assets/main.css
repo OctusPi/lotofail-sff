@@ -1,0 +1,59 @@
+@import 'b%/bootstrap.min.css';
+@import 'bi%/bootstrap-icons.css';
+@import './base.css';
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.load-wall {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background-color: var(--color-wall-load);
+  top: 0;
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.load-img {
+  width: 50px;
+  animation: rotate 3s linear infinite;
+}
+
+.form-control {
+  border: 2px solid var(--color-input-border);
+  background-color: var(--color-input);
+  padding: 10px 14px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.form-control:focus {
+  border: 2px solid var(--color-input-focus);
+  background-color: var(--color-input);
+  color: var(--color-text);
+  outline: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+.form-control::placeholder {
+  color: var(--color-input-placeholder);
+}
+
+.alert {
+  position: fixed;
+  width: 340px;
+  z-index: 3000;
+  bottom: 20px;
+  right: 18px;
+}
