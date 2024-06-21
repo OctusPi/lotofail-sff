@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMonted } from 'vue'
 import store from '@/stores/local'
 import http from '@/services/http'
 
@@ -88,6 +88,10 @@ function checkWinner(bet) {
     return `Total Acertos: ${r}`
   }
 }
+
+onMonted(() => {
+  game.value.prizes_interval = parseInt(game.value.prizes.end) - parseInt(game.value.prizes.start)
+})
 </script>
 
 <template>
